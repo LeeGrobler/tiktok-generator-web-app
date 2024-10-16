@@ -1,15 +1,26 @@
 import { useContext } from "react";
 import { RedditContext } from "../store/reddit-context";
+import { Link } from "react-router-dom";
 
 export default function Posts() {
-  const { posts, addPost } = useContext(RedditContext);
+  const { posts } = useContext(RedditContext);
 
   return (
     <>
-      <button onClick={() => addPost(Math.random())}>Add Post</button>
-      <p>
-        Posts ({posts.length}): {posts}
-      </p>
+      <p>Posts ({posts.length}):</p>
+      {posts.map((v) => (
+        <div key={v.data.id}>
+          <Link to={v.data.id}>{v.data.id}</Link>
+        </div>
+      ))}
     </>
   );
 }
+
+export const loader = async () => {
+  try {
+    await fetch();
+  } catch (error) {
+    console.log("error:", error);
+  }
+};
