@@ -16,11 +16,3 @@ export default function Posts() {
     </>
   );
 }
-
-export const loader = async () => {
-  try {
-    await fetch();
-  } catch (error) {
-    console.log("error:", error);
-  }
-};
