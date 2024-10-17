@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useCallback, useEffect, useReducer } from "react";
 
 import { useContext } from "react";
 import { GeneralContext } from "../store/general-context";
@@ -20,36 +20,40 @@ const reducer = (state, action) => {
 };
 
 export default function RedditContextProvider({ children }) {
-  const { notify } = useContext(GeneralContext);
+  const { toggleLoading, notify } = useContext(GeneralContext);
 
   const [state, dispatch] = useReducer(reducer, {
     posts: [],
   });
 
-  useEffect(() => {
+  const fetchPosts = useCallback(async () => {
+    toggleLoading(true);
+
     try {
-      fetchPosts();
+      const response = await fetch(
+        "https://www.reddit.com/r/AmItheAsshole/top.json?limit=5"
+      );
+
+      if (!response.ok) {
+        throw new Error("Unable to retrieve Reddit posts.");
+      }
+
+      const result = await response.json();
+
+      return dispatch({
+        type: "set-posts",
+        payload: result.data.children,
+      });
     } catch (error) {
       notify(error);
+    } finally {
+      toggleLoading(false);
     }
-  }, [notify]);
+  }, [toggleLoading, notify]);
 
-  const fetchPosts = async () => {
-    const response = await fetch(
-      "https://www.reddit.com/r/AmItheAsshole/top.json?limit=5"
-    );
-
-    if (!response.ok) {
-      throw new Error("Unable to retrieve Reddit posts.");
-    }
-
-    const result = await response.json();
-
-    return dispatch({
-      type: "set-posts",
-      payload: result.data.children,
-    });
-  };
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   const ctxValue = {
     posts: state.posts,
