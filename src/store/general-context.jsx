@@ -1,4 +1,5 @@
 import { createContext, useReducer, useCallback } from "react";
+import { useSnackbar } from "notistack";
 
 export const GeneralContext = createContext({
   loading: false,
@@ -18,6 +19,8 @@ const reducer = (state, action) => {
 };
 
 export default function GeneralContextProvider({ children }) {
+  const { enqueueSnackbar } = useSnackbar();
+
   const [{ loading }, dispatch] = useReducer(reducer, {
     loading: false,
   });
@@ -29,9 +32,11 @@ export default function GeneralContextProvider({ children }) {
     });
   }, []);
 
-  const notify = useCallback((message) => {
-    console.log("notifying you of:", message);
-  }, []);
+  const notify = useCallback(
+    // variants: success, info, warning, error
+    (message, type) => enqueueSnackbar(message, { variant: type || "info" }),
+    [enqueueSnackbar]
+  );
 
   const ctxValue = {
     loading,

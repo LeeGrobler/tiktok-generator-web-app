@@ -31,7 +31,7 @@ export default function RedditContextProvider({ children }) {
 
     try {
       const response = await fetch(
-        "https://www.reddit.com/r/AmItheAsshole/top.json?limit=5"
+        "https://www.reddit.com/r/AmItheAsshole/top.json?limit=3"
       );
 
       if (!response.ok) {
@@ -40,12 +40,12 @@ export default function RedditContextProvider({ children }) {
 
       const result = await response.json();
 
-      return dispatch({
+      dispatch({
         type: "set-posts",
         payload: result.data.children,
       });
     } catch (error) {
-      notify(error);
+      notify(error.message, "error");
     } finally {
       toggleLoading(false);
     }
