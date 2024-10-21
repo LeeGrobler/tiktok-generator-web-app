@@ -1,15 +1,12 @@
 import { useContext } from "react";
-// import { Link } from "react-router-dom";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Link } from "react-router-dom";
 import {
   Skeleton,
-  Accordion,
-  AccordionActions,
-  AccordionSummary,
-  AccordionDetails,
-  Button,
   Card,
   CardHeader,
+  ListItemText,
+  ListItemButton,
+  Paper,
 } from "@mui/material";
 
 import { RedditContext } from "../store/reddit-context";
@@ -20,12 +17,11 @@ export default function Posts() {
   const { loading } = useContext(GeneralContext);
 
   if (loading) {
-    return [...Array(5).keys()].map((v) => (
+    return [...Array(3).keys()].map((v) => (
       <Card key={v} sx={{ my: v > 0 ? 1 : 0 }}>
         <CardHeader
           title={
             <>
-              <Skeleton animation="wave" height={10} />
               <Skeleton animation="wave" height={10} />
             </>
           }
@@ -37,19 +33,20 @@ export default function Posts() {
   return (
     <>
       {posts.map((v) => (
-        <Accordion key={v.data.id}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel3-content"
-            id="panel3-header"
+        <Link
+          key={v.data.id}
+          to={`/${v.data.id}`}
+          style={{ textDecoration: "none" }}
+        >
+          <Paper
+            elevation={3}
+            sx={{ mb: 2, p: 1, backgroundColor: "background.paper" }}
           >
-            {v.data.title}
-          </AccordionSummary>
-          <AccordionDetails>{v.data.selftext}</AccordionDetails>
-          <AccordionActions>
-            <Button>Agree</Button>
-          </AccordionActions>
-        </Accordion>
+            <ListItemButton>
+              <ListItemText primary={v.data.title} />
+            </ListItemButton>
+          </Paper>
+        </Link>
       ))}
     </>
   );
