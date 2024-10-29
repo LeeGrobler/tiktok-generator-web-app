@@ -3,8 +3,8 @@ import { useSnackbar } from "notistack";
 
 export const GeneralContext = createContext({
   loading: {
-    reddit: false,
-    summary: false,
+    reddit: null,
+    summary: null,
   },
   toggleLoading: () => {},
   notify: () => {},
@@ -25,8 +25,8 @@ export default function GeneralContextProvider({ children }) {
 
   const [{ loading }, dispatch] = useReducer(reducer, {
     loading: {
-      reddit: false,
-      summary: false,
+      reddit: null,
+      summary: null,
     },
   });
 

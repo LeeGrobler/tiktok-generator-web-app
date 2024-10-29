@@ -31,7 +31,7 @@ export default function RedditContextProvider({ children }) {
   });
 
   const fetchPosts = useCallback(async () => {
-    toggleLoading(true, "reddit");
+    toggleLoading("Fetching Reddit posts", "reddit");
 
     try {
       const response = await fetch(
@@ -56,7 +56,7 @@ export default function RedditContextProvider({ children }) {
     } catch (error) {
       notify(error.message, "error");
     } finally {
-      toggleLoading(false, "reddit");
+      toggleLoading(null, "reddit");
     }
   }, [toggleLoading, notify]);
 

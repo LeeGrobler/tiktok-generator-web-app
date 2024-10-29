@@ -34,7 +34,7 @@ export default function ApiContextProvider({ children }) {
 
   const fetchSummary = useCallback(
     async (post) => {
-      toggleLoading(true, "summary");
+      toggleLoading("Fetching summary", "summary");
 
       try {
         const response = await fetch(
@@ -67,7 +67,7 @@ export default function ApiContextProvider({ children }) {
       } catch (error) {
         notify(error.message, "error");
       } finally {
-        toggleLoading(false, "summary");
+        toggleLoading(null, "summary");
       }
     },
     [toggleLoading, notify]
