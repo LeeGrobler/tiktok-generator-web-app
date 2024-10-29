@@ -1,6 +1,10 @@
-import { createContext, useCallback, useEffect, useReducer } from "react";
-
-import { useContext } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useReducer,
+  useContext,
+} from "react";
 import { GeneralContext } from "../store/general-context";
 
 export const RedditContext = createContext({
@@ -27,18 +31,23 @@ export default function RedditContextProvider({ children }) {
   });
 
   const fetchPosts = useCallback(async () => {
-    toggleLoading(true);
+    toggleLoading(true, "reddit");
 
     try {
       const response = await fetch(
-        "https://www.reddit.com/r/AmItheAsshole/top.json?limit=3"
+        import.meta.env.VITE_REDDIT_URL.replace(
+          "<subreddit>",
+          "AmItheAsshole"
+        ).replace("<limit>", 3)
       );
 
-      if (!response.ok) {
-        throw new Error("Unable to retrieve Reddit posts.");
-      }
-
       const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || `${response.status} - Unable to retrieve summary.`
+        );
+      }
 
       dispatch({
         type: "set-posts",
@@ -47,7 +56,7 @@ export default function RedditContextProvider({ children }) {
     } catch (error) {
       notify(error.message, "error");
     } finally {
-      toggleLoading(false);
+      toggleLoading(false, "reddit");
     }
   }, [toggleLoading, notify]);
 

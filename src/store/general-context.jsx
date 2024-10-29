@@ -2,17 +2,19 @@ import { createContext, useReducer, useCallback } from "react";
 import { useSnackbar } from "notistack";
 
 export const GeneralContext = createContext({
-  loading: false,
+  loading: {
+    reddit: false,
+    summary: false,
+  },
   toggleLoading: () => {},
   notify: () => {},
 });
 
 const reducer = (state, action) => {
   if (action.type === "set-loading") {
-    return {
-      ...state,
-      loading: action.payload,
-    };
+    const newState = { ...state };
+    newState.loading[action.payload.target] = action.payload.loading;
+    return newState;
   }
 
   return state;
@@ -22,13 +24,16 @@ export default function GeneralContextProvider({ children }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const [{ loading }, dispatch] = useReducer(reducer, {
-    loading: false,
+    loading: {
+      reddit: false,
+      summary: false,
+    },
   });
 
-  const toggleLoading = useCallback((loading) => {
+  const toggleLoading = useCallback((loading, target) => {
     dispatch({
       type: "set-loading",
-      payload: loading,
+      payload: { loading, target },
     });
   }, []);
 

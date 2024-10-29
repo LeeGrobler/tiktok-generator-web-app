@@ -14,7 +14,9 @@ import { GeneralContext } from "../store/general-context";
 
 export default function Posts() {
   const { posts } = useContext(RedditContext);
-  const { loading } = useContext(GeneralContext);
+  const {
+    loading: { reddit: loading },
+  } = useContext(GeneralContext);
 
   if (loading) {
     return [...Array(3).keys()].map((v) => (
