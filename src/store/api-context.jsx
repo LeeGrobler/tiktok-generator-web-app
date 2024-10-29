@@ -1,36 +1,14 @@
-import { createContext, useCallback, useReducer, useContext } from "react";
+import { createContext, useCallback, useContext } from "react";
 import { GeneralContext } from "../store/general-context";
 
 export const ApiContext = createContext({
-  summary: {
-    gender: "",
-    video: [],
-    script: "",
-  },
   fetchSummary: () => {},
+  fetchSpeech: () => {},
+  fetchVideo: () => {},
 });
-
-const reducer = (state, action) => {
-  if (action.type === "set-summary") {
-    return {
-      ...state,
-      summary: action.payload,
-    };
-  }
-
-  return state;
-};
 
 export default function ApiContextProvider({ children }) {
   const { toggleLoading, notify } = useContext(GeneralContext);
-
-  const [state, dispatch] = useReducer(reducer, {
-    summary: {
-      gender: "",
-      video: [],
-      script: "",
-    },
-  });
 
   const fetchSummary = useCallback(
     async (post) => {
@@ -60,10 +38,7 @@ export default function ApiContextProvider({ children }) {
           );
         }
 
-        dispatch({
-          type: "set-summary",
-          payload: result,
-        });
+        return result;
       } catch (error) {
         notify(error.message, "error");
       } finally {
@@ -73,9 +48,88 @@ export default function ApiContextProvider({ children }) {
     [toggleLoading, notify]
   );
 
+  const fetchSpeech = useCallback(
+    async (summary) => {
+      toggleLoading("Synthesizing speech", "speech");
+
+      try {
+        const response = await fetch(
+          import.meta.env.VITE_BACKEND_URL + "/synthesizeSpeech",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({
+              gender: summary.gender,
+              script: summary.script,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const result = await response.json();
+
+          throw new Error(
+            result.message ||
+              `${response.status} - Unable to synthesize speech.`
+          );
+        }
+
+        const blob = await response.blob();
+        return URL.createObjectURL(blob);
+      } catch (error) {
+        notify(error.message, "error");
+      } finally {
+        toggleLoading(null, "speech");
+      }
+    },
+    [toggleLoading, notify]
+  );
+
+  const fetchVideo = useCallback(
+    async (summary) => {
+      toggleLoading("Downloading video", "video");
+
+      try {
+        const response = await fetch(
+          import.meta.env.VITE_BACKEND_URL + "/downloadVideo",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({
+              searchTerms: summary.video,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const result = await response.json();
+
+          throw new Error(
+            result.message || `${response.status} - Unable to download video.`
+          );
+        }
+
+        const blob = await response.blob();
+        return URL.createObjectURL(blob);
+      } catch (error) {
+        notify(error.message, "error");
+      } finally {
+        toggleLoading(null, "video");
+      }
+    },
+    [toggleLoading, notify]
+  );
+
   const ctxValue = {
-    summary: state.summary,
     fetchSummary,
+    fetchSpeech,
+    fetchVideo,
   };
 
   return <ApiContext.Provider value={ctxValue}>{children}</ApiContext.Provider>;

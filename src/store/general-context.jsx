@@ -5,9 +5,13 @@ export const GeneralContext = createContext({
   loading: {
     reddit: null,
     summary: null,
+    speech: null,
+    video: null,
   },
+  pageHeader: null,
   toggleLoading: () => {},
   notify: () => {},
+  setPageHeader: () => {},
 });
 
 const reducer = (state, action) => {
@@ -17,17 +21,27 @@ const reducer = (state, action) => {
     return newState;
   }
 
+  if (action.type === "set-page-header") {
+    return {
+      ...state,
+      pageHeader: action.payload,
+    };
+  }
+
   return state;
 };
 
 export default function GeneralContextProvider({ children }) {
   const { enqueueSnackbar } = useSnackbar();
 
-  const [{ loading }, dispatch] = useReducer(reducer, {
+  const [{ loading, pageHeader }, dispatch] = useReducer(reducer, {
     loading: {
       reddit: null,
       summary: null,
+      speech: null,
+      video: null,
     },
+    pageHeader: null,
   });
 
   const toggleLoading = useCallback((loading, target) => {
@@ -43,10 +57,19 @@ export default function GeneralContextProvider({ children }) {
     [enqueueSnackbar]
   );
 
+  const setPageHeader = useCallback((header) => {
+    dispatch({
+      type: "set-page-header",
+      payload: header,
+    });
+  }, []);
+
   const ctxValue = {
     loading,
+    pageHeader,
     toggleLoading,
     notify,
+    setPageHeader,
   };
 
   return (

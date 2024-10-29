@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Skeleton,
@@ -16,7 +16,12 @@ export default function Posts() {
   const { posts } = useContext(RedditContext);
   const {
     loading: { reddit: loading },
+    setPageHeader,
   } = useContext(GeneralContext);
+
+  useEffect(() => {
+    setPageHeader("r/AmItheAsshole");
+  }, [setPageHeader]);
 
   if (loading) {
     return [...Array(3).keys()].map((v) => (

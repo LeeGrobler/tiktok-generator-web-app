@@ -8,7 +8,7 @@ import {
   Skeleton,
 } from "@mui/material";
 
-export default function PostAccordion({ loading, title, content }) {
+export default function PostAccordion({ loading, title, content, children }) {
   return loading ? (
     <Card>
       <CardHeader
@@ -26,9 +26,11 @@ export default function PostAccordion({ loading, title, content }) {
         aria-controls="panel3-content"
         id="panel3-header"
       >
-        <span className={!content ? "text-red-600" : null}>{title}</span>
+        <span className={!content && !children ? "text-red-600" : null}>
+          {title}
+        </span>
       </AccordionSummary>
-      <AccordionDetails>{content}</AccordionDetails>
+      <AccordionDetails>{children || content}</AccordionDetails>
     </Accordion>
   );
 }

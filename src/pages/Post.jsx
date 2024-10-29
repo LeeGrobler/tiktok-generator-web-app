@@ -11,10 +11,13 @@ export default function Post() {
   const navigate = useNavigate();
 
   const { posts } = useContext(RedditContext);
-  const { loading, notify } = useContext(GeneralContext);
-  const { summary, fetchSummary } = useContext(ApiContext);
+  const { loading, notify, setPageHeader } = useContext(GeneralContext);
+  const { fetchSummary, fetchSpeech, fetchVideo } = useContext(ApiContext);
 
   const [post, setPost] = useState(null);
+  const [summary, setSummary] = useState(null);
+  const [speech, setSpeech] = useState(null);
+  const [video, setVideo] = useState(null);
 
   useEffect(() => {
     if (loading.reddit || !posts.length) return;
@@ -30,11 +33,33 @@ export default function Post() {
       }
 
       setPost(post?.data);
-      await fetchSummary(post.data);
+      setPageHeader(post.data.title.substring(0, 25) + "...");
+
+      const summary = await fetchSummary(post.data);
+      setSummary(summary);
+
+      const [speech, video] = await Promise.all([
+        fetchSpeech(summary),
+        fetchVideo(summary),
+        // loadMp3FromAssets("@/assets/creative-technology-showreel.mp3"), // TODO: fix this music url function
+      ]);
+
+      setSpeech(speech);
+      setVideo(video);
     };
 
     processPost();
-  }, [posts, location, notify, navigate, fetchSummary, loading]);
+  }, [
+    posts,
+    location,
+    notify,
+    navigate,
+    fetchSummary,
+    loading,
+    setPageHeader,
+    fetchSpeech,
+    fetchVideo,
+  ]);
 
   return (
     <>
@@ -51,6 +76,23 @@ export default function Post() {
             title="Summary"
             content={summary?.script}
           />
+
+          <PostAccordion
+            loading={loading.summary || loading.speech}
+            title="Speech"
+          >
+            <audio controls src={speech} />
+          </PostAccordion>
+
+          <PostAccordion
+            loading={loading.summary || loading.video}
+            title="Background Video"
+          >
+            <video controls className="w-100">
+              <source src={video} type="video/webm" />
+              <source src={video} type="video/mp4" />
+            </video>
+          </PostAccordion>
         </>
       )}
     </>

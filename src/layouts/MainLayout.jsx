@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
 import Header from "../components/Header";
+import StatusBar from "../components/StatusBar";
 
 const darkTheme = createTheme({
   palette: {
@@ -15,11 +16,13 @@ export default function MainLayout() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
 
-      <Header title="Header" />
+      <Header />
 
       <main className="p-4">
         <Outlet />
       </main>
+
+      <StatusBar />
     </ThemeProvider>
   );
 }

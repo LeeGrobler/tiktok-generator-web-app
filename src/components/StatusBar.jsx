@@ -12,5 +12,7 @@ export default function StatusBar() {
     setMessage(status);
   }, [loading, loadingObj]);
 
-  return <div className="fixed bottom-0 w-full text-center">{message}</div>;
+  return (
+    <footer className="fixed bottom-0 w-full text-center">{message}</footer>
+  );
 }
