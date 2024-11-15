@@ -12,12 +12,14 @@ export default function Post() {
 
   const { posts } = useContext(RedditContext);
   const { loading, notify, setPageHeader } = useContext(GeneralContext);
-  const { fetchSummary, fetchSpeech, fetchVideo } = useContext(ApiContext);
+  const { fetchSummary, fetchSpeech, fetchVideo, fetchMusic } =
+    useContext(ApiContext);
 
   const [post, setPost] = useState(null);
   const [summary, setSummary] = useState(null);
   const [speech, setSpeech] = useState(null);
   const [video, setVideo] = useState(null);
+  const [music, setMusic] = useState(null);
 
   useEffect(() => {
     if (loading.reddit || !posts.length) return;
@@ -38,14 +40,15 @@ export default function Post() {
       const summary = await fetchSummary(post.data);
       setSummary(summary);
 
-      const [speech, video] = await Promise.all([
+      const [speech, video, music] = await Promise.all([
         fetchSpeech(summary),
         fetchVideo(summary),
-        // loadMp3FromAssets("@/assets/creative-technology-showreel.mp3"), // TODO: fix this music url function
+        fetchMusic(summary),
       ]);
 
       setSpeech(speech);
       setVideo(video);
+      setMusic(music);
     };
 
     processPost();
@@ -59,13 +62,14 @@ export default function Post() {
     setPageHeader,
     fetchSpeech,
     fetchVideo,
+    fetchMusic,
   ]);
 
   return (
     <>
       <PostAccordion
         loading={loading.reddit}
-        title={post?.title}
+        title="Post"
         content={post?.selftext}
       />
 
@@ -82,6 +86,13 @@ export default function Post() {
             title="Speech"
           >
             <audio controls src={speech} />
+          </PostAccordion>
+
+          <PostAccordion
+            loading={loading.summary || loading.music}
+            title="Music"
+          >
+            <audio controls src={music} />
           </PostAccordion>
 
           <PostAccordion

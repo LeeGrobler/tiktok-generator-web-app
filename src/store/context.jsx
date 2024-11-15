@@ -1,6 +1,6 @@
-import GeneralProvider from "./general-context";
-import RedditProvider from "./reddit-context";
-import ApiProvider from "./api-context";
+import GeneralProvider from "./general-provider";
+import RedditProvider from "./reddit-provider";
+import ApiProvider from "./api-provider";
 
 export default function ContextProvider({ children }) {
   return (
