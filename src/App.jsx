@@ -6,7 +6,7 @@ import ContextProvider from "./store/context";
 
 export default function App() {
   return (
-    <SnackbarProvider maxSnack={5}>
+    <SnackbarProvider maxSnack={10}>
       <ContextProvider>
         <RouterProvider
           router={router}

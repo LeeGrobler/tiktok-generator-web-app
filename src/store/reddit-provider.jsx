@@ -44,6 +44,7 @@ export default function RedditContextProvider({ children }) {
         payload: result.data.children,
       });
     } catch (error) {
+      console.error(error);
       notify(error.message, "error");
     } finally {
       toggleLoading(null, "reddit");

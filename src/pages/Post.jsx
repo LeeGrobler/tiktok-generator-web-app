@@ -89,13 +89,6 @@ export default function Post() {
           </PostAccordion>
 
           <PostAccordion
-            loading={loading.summary || loading.music}
-            title="Music"
-          >
-            <audio controls src={music} />
-          </PostAccordion>
-
-          <PostAccordion
             loading={loading.summary || loading.video}
             title="Background Video"
           >
@@ -103,6 +96,13 @@ export default function Post() {
               <source src={video} type="video/webm" />
               <source src={video} type="video/mp4" />
             </video>
+          </PostAccordion>
+
+          <PostAccordion
+            loading={loading.summary || loading.music}
+            title="Music"
+          >
+            <audio controls src={music} />
           </PostAccordion>
         </>
       )}

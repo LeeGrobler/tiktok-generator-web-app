@@ -35,6 +35,7 @@ export default function ApiContextProvider({ children }) {
 
         return result;
       } catch (error) {
+        console.error(error);
         notify(error.message, "error");
       } finally {
         toggleLoading(null, "summary");
@@ -75,6 +76,7 @@ export default function ApiContextProvider({ children }) {
         const blob = await response.blob();
         return URL.createObjectURL(blob);
       } catch (error) {
+        console.error(error);
         notify(error.message, "error");
       } finally {
         toggleLoading(null, "speech");
@@ -113,6 +115,7 @@ export default function ApiContextProvider({ children }) {
         const blob = await response.blob();
         return URL.createObjectURL(blob);
       } catch (error) {
+        console.error(error);
         notify(error.message, "error");
       } finally {
         toggleLoading(null, "video");
@@ -151,6 +154,7 @@ export default function ApiContextProvider({ children }) {
         const blob = await response.blob();
         return URL.createObjectURL(blob);
       } catch (error) {
+        console.error(error);
         notify(error.message, "error");
       } finally {
         toggleLoading(null, "music");
